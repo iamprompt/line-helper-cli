@@ -1,6 +1,8 @@
 import { LIFFAppSchema } from '@/models/liff'
 import { createLIFFApp } from '@/utils/line'
 import { prompt } from '@/utils/prompts'
+import { validateUrl } from '@/utils/validations'
+import { liffEndpointPrompt } from './liffEndpointPrompt'
 
 const LIFFAppViewTypes = {
   full: 'Full',
@@ -67,27 +69,20 @@ export const createLIFFAppPrompt = async () => {
         value,
       })),
     },
-    {
-      type: 'text',
-      name: 'url',
-      message: 'Input LIFF App URL',
-      validate: (url) => {
-        try {
-          new URL(url)
-          return true
-        } catch (error) {
-          return 'Invalid URL'
-        }
-      },
-    },
   ])
+
+  const endpoint = await liffEndpointPrompt()
+
+  if (!endpoint) {
+    process.exit(1)
+  }
 
   const createdPayload = await LIFFAppSchema.parseAsync({
     description: response.description,
     view: {
       type: response.type,
       moduleMode: response.moduleMode,
-      url: response.url,
+      url: endpoint,
     },
     features: { qrCode: response.qrCode },
     scope: response.scopes,

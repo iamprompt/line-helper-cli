@@ -1,7 +1,12 @@
 import { LIFFApp } from '@/models/liff'
+import { NgrokTunnelsAPIResponseSchema } from '@/models/ngrok'
 import { updateLIFFApp } from '@/utils/line'
+import { logger } from '@/utils/logger'
 import { prompt } from '@/utils/prompts'
 import { validateUrl } from '@/utils/validations'
+import axios from 'axios'
+import { z } from 'zod'
+import { liffEndpointPrompt } from './liffEndpointPrompt'
 
 export const updateLIFFEndpointPrompt = async (liff: LIFFApp) => {
   const { needToUpdate } = await prompt([
@@ -18,14 +23,12 @@ export const updateLIFFEndpointPrompt = async (liff: LIFFApp) => {
     return liff
   }
 
-  const { endpoint } = await prompt([
-    {
-      type: 'text',
-      name: 'endpoint',
-      message: 'Input LIFF Endpoint URL',
-      validate: validateUrl,
-    },
-  ])
+  const endpoint = await liffEndpointPrompt()
+
+  if (!endpoint) {
+    logger.error('LIFF Endpoint is not found.')
+    process.exit(1)
+  }
 
   return await updateLIFFApp(liff.liffId!, {
     view: {

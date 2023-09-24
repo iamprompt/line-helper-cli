@@ -23,6 +23,10 @@ const update = async () => {
   }
 
   await updateLIFFEndpointPrompt(app)
+
+  logger.break()
+
+  logger.success(`Successfully updated LIFF App Endpoint.`)
 }
 
 export const updateCommand = new Command()
