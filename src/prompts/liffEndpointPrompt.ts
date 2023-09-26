@@ -31,7 +31,7 @@ export const liffEndpointPrompt = async () => {
     try {
       const tunnels = await axios.get<
         z.infer<typeof NgrokTunnelsAPIResponseSchema>
-      >('http://localhost:4040/api/tunnels')
+      >('http://127.0.0.1:4040/api/tunnels')
 
       const { tunnel } = await prompt([
         {
