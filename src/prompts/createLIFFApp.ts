@@ -1,15 +1,15 @@
-import { LIFFAppSchema } from '@/models/liff'
-import { createLIFFApp } from '@/services/line'
-import { prompt } from '@/utils/prompts'
-import { validateUrl } from '@/utils/validations'
-import { URLEndpointPrompt } from './URLEndpoint'
-import { parseOptions } from '@/utils/options'
 import {
   LIFF_APP_BOT_PROMPT_OPTIONS,
   LIFF_APP_SCOPE_OPTIONS,
   LIFF_APP_VIEW_TYPE_OPTIONS,
 } from '@/const/options'
+import { LIFFAppSchema } from '@/models/liff'
+import { createLIFFApp } from '@/services/line'
 import { logger } from '@/utils/logger'
+import { parseOptions } from '@/utils/options'
+import { prompt } from '@/utils/prompts'
+
+import { URLEndpointPrompt } from './URLEndpoint'
 
 type PromptResponse = {
   description: string

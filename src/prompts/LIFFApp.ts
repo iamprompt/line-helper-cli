@@ -1,8 +1,9 @@
 import { LIFFApp } from '@/models/liff'
-import { prompt } from '@/utils/prompts'
-import { parseOptions } from '@/utils/options'
 import { logger } from '@/utils/logger'
-import { CreateLIFFAppPrompt } from './createLIFFApp'
+import { parseOptions } from '@/utils/options'
+import { prompt } from '@/utils/prompts'
+
+import { CreateLIFFAppPrompt } from './CreateLIFFApp'
 
 export const LIFFAppPrompt = async (
   apps: LIFFApp[],

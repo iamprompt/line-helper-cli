@@ -1,8 +1,9 @@
 import { LINE_SCOPE_OPTIONS } from '@/const/options'
+import { setWebhookEndpoint, updateLIFFApp } from '@/services/line'
 import { logger } from '@/utils/logger'
 import { prompt } from '@/utils/prompts'
+
 import { URLEndpointPrompt } from './URLEndpoint'
-import { setWebhookEndpoint, updateLIFFApp } from '@/services/line'
 
 type UpdateEndpointPromptParams = {
   type: keyof typeof LINE_SCOPE_OPTIONS

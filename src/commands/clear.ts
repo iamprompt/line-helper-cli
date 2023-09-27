@@ -1,5 +1,6 @@
-import { clearConfig, loadConfig } from '@/utils/config'
 import { Command } from 'commander'
+
+import { clearConfig } from '@/utils/config'
 
 const clear = async () => {
   clearConfig()

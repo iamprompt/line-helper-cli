@@ -1,27 +1,31 @@
+import { Command } from 'commander'
+
 import { getCredentials } from '@/prompts/getCredentials'
-import { saveConfig } from '@/utils/config'
+import { LIFFAppPrompt } from '@/prompts/LIFFApp'
+import { UpdateEndpointPrompt } from '@/prompts/UpdateEndpoint'
 import {
   findLIFFAppByLIFFId,
   getLIFFApps,
   getWebhookEndpoint,
 } from '@/services/line'
+import { saveConfig } from '@/utils/config'
 import { logger } from '@/utils/logger'
-import { Command } from 'commander'
-import { UpdateEndpointPrompt } from '@/prompts/UpdateEndpoint'
-import { LIFFAppPrompt } from '@/prompts/LIFFApp'
 
 const bindLIFFApp = async () => {
   const apps = await getLIFFApps()
   const selectedLIFFAppId = await LIFFAppPrompt(apps)
   const existingLIFFApp = findLIFFAppByLIFFId(selectedLIFFAppId, apps)
 
-  if (existingLIFFApp) {
-    await UpdateEndpointPrompt({
-      type: 'liff',
-      id: selectedLIFFAppId,
-      currentEndpoint: existingLIFFApp.view.url,
-    })
+  if (!existingLIFFApp) {
+    logger.error('LIFF App is not found.')
+    process.exit(1)
   }
+
+  await UpdateEndpointPrompt({
+    type: 'liff',
+    id: selectedLIFFAppId,
+    currentEndpoint: existingLIFFApp.view.url,
+  })
 
   saveConfig({ scope: 'liff', liffId: selectedLIFFAppId })
 
@@ -32,7 +36,7 @@ const bindLIFFApp = async () => {
 
 const bindMessagingAPI = async () => {
   const { endpoint } = await getWebhookEndpoint()
-  const result: string = await UpdateEndpointPrompt({
+  await UpdateEndpointPrompt({
     id: '',
     type: 'messaging-api',
     currentEndpoint: endpoint,

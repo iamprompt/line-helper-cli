@@ -1,14 +1,9 @@
 import { TUNNEL_SERVICE_OPTIONS } from '@/const/options'
-import { NgrokTunnelsAPIResponseSchema } from '@/models/ngrok'
-import { logger } from '@/utils/logger'
 import { parseOptions } from '@/utils/options'
 import { prompt } from '@/utils/prompts'
-import { validateUrl } from '@/utils/validations'
-import axios from 'axios'
-import { ValueOf } from 'type-fest'
-import { z } from 'zod'
-import { URLEndpointNgrokPrompt } from './URLEndpointNgrok'
+
 import { URLEndpointCustomPrompt } from './URLEndpointCustom'
+import { URLEndpointNgrokPrompt } from './URLEndpointNgrok'
 
 type TunnelServicePrompt = {
   tunnelService: keyof typeof TUNNEL_SERVICE_OPTIONS

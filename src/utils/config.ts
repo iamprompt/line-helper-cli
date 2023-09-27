@@ -1,6 +1,8 @@
-import { Config } from '@/models/config'
 import { cosmiconfigSync } from 'cosmiconfig'
 import fs from 'fs-extra'
+
+import { Config } from '@/models/config'
+
 import { debug, logger } from './logger'
 
 const explorerSync = cosmiconfigSync('liff')

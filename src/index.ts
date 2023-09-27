@@ -1,20 +1,16 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander'
-import { getPackageInfo } from '@/utils/getPackageInfo'
+
 import { initCommand, updateCommand } from '@/commands'
-import { getCredentials } from './prompts/getCredentials'
-import { logger, setDebugMode } from './utils/logger'
+import { getPackageInfo } from '@/utils/getPackageInfo'
+
 import { clearCommand } from './commands/clear'
 import { setPersistedConfig } from './utils/config'
+import { logger, setDebugMode } from './utils/logger'
 
 process.on('SIGINT', () => process.exit(0))
 process.on('SIGTERM', () => process.exit(0))
-
-type Options = {
-  debug: boolean
-  persist: boolean
-}
 
 const main = async () => {
   const packageInfo = await getPackageInfo()

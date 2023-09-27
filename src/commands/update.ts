@@ -1,11 +1,11 @@
-import { getCredentials } from '@/prompts/getCredentials'
-import { loadConfig } from '@/utils/config'
-import { getLIFFApp, getLIFFApps, getWebhookEndpoint } from '@/services/line'
-import { logger } from '@/utils/logger'
 import { Command } from 'commander'
-import { LINEScopePrompt } from '@/prompts/LINEScope'
-import { UpdateEndpointPrompt } from '@/prompts/UpdateEndpoint'
+
+import { getCredentials } from '@/prompts/getCredentials'
 import { LIFFAppPrompt } from '@/prompts/LIFFApp'
+import { UpdateEndpointPrompt } from '@/prompts/UpdateEndpoint'
+import { getLIFFApp, getLIFFApps, getWebhookEndpoint } from '@/services/line'
+import { loadConfig } from '@/utils/config'
+import { logger } from '@/utils/logger'
 
 const updateLIFF = async () => {
   let { liffId } = await loadConfig()
