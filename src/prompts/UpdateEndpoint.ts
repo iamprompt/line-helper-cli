@@ -1,5 +1,6 @@
 import { LINE_SCOPE_OPTIONS } from '@/const/options'
 import { setWebhookEndpoint, updateLIFFApp } from '@/services/line'
+import { saveConfig } from '@/utils/config'
 import { logger } from '@/utils/logger'
 import { prompt } from '@/utils/prompts'
 
@@ -30,7 +31,8 @@ export const UpdateEndpointPrompt = async ({
   ])
 
   if (!needToUpdate) {
-    logger.info('URL Endpoint is not updated.')
+    logger.break()
+    logger.info('Skip updating URL Endpoint.')
     process.exit(0)
   }
 
@@ -49,6 +51,8 @@ export const UpdateEndpointPrompt = async ({
           `Successfully updated LIFF App (id: ${id}) to ${newEndpoint}.`,
         )
 
+        saveConfig({ scope: 'liff', liffId: id })
+
         return newEndpoint
       case 'messaging-api':
         await setWebhookEndpoint(newEndpoint)
@@ -56,6 +60,9 @@ export const UpdateEndpointPrompt = async ({
         logger.success(
           `Successfully updated Messaging API webhook to ${newEndpoint}.`,
         )
+
+        saveConfig({ scope: 'messaging-api', liffId: undefined })
+
         return newEndpoint
     }
   } catch (error) {

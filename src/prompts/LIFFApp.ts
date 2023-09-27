@@ -1,4 +1,5 @@
 import { LIFFApp } from '@/models/liff'
+import { saveConfig } from '@/utils/config'
 import { logger } from '@/utils/logger'
 import { parseOptions } from '@/utils/options'
 import { prompt } from '@/utils/prompts'
@@ -8,7 +9,7 @@ import { CreateLIFFAppPrompt } from './CreateLIFFApp'
 export const LIFFAppPrompt = async (
   apps: LIFFApp[],
   create: boolean = true,
-) => {
+): Promise<[string, boolean]> => {
   const LIFF_APPS_OPTIONS = apps.map((app) => ({
     title: `[${app.liffId}] ${app.description} (${app.view.url})`,
     value: app,
@@ -37,8 +38,10 @@ export const LIFFAppPrompt = async (
       process.exit(1)
     }
 
-    return newLIFFApp.liffId
+    return [newLIFFApp.liffId, true]
   }
 
-  return selectedLIFFApp.liffId as string
+  saveConfig({ scope: 'liff', liffId: selectedLIFFApp.liffId })
+
+  return [selectedLIFFApp.liffId as string, false]
 }

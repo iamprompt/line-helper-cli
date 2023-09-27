@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 
-let isDebug = true
+let isDebug = false
 
 export const setDebugMode = (debugMode: boolean) => {
   isDebug = debugMode

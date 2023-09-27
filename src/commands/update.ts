@@ -4,16 +4,27 @@ import { getCredentials } from '@/prompts/getCredentials'
 import { LIFFAppPrompt } from '@/prompts/LIFFApp'
 import { UpdateEndpointPrompt } from '@/prompts/UpdateEndpoint'
 import { getLIFFApp, getLIFFApps, getWebhookEndpoint } from '@/services/line'
-import { loadConfig } from '@/utils/config'
+import { loadConfig, saveConfig } from '@/utils/config'
 import { logger } from '@/utils/logger'
+import { getOptions } from '@/utils/program'
 
 const updateLIFF = async () => {
   let { liffId } = await loadConfig()
 
+  let isNewlyCreate = false
+
+  const { changeLiff } = await getOptions()
+
+  if (changeLiff) {
+    liffId = undefined
+    saveConfig({ scope: 'liff', liffId: undefined })
+  }
+
   if (!liffId) {
     const apps = await getLIFFApps()
-    const selectedLIFFApp = await LIFFAppPrompt(apps, false)
+    const [selectedLIFFApp, isNew] = await LIFFAppPrompt(apps)
     liffId = selectedLIFFApp
+    isNewlyCreate = isNew
   }
 
   const app = await getLIFFApp(liffId)
@@ -23,11 +34,13 @@ const updateLIFF = async () => {
     process.exit(1)
   }
 
-  await UpdateEndpointPrompt({
-    type: 'liff',
-    id: liffId,
-    currentEndpoint: app.view.url,
-  })
+  if (!isNewlyCreate) {
+    await UpdateEndpointPrompt({
+      type: 'liff',
+      id: liffId,
+      currentEndpoint: app.view.url,
+    })
+  }
 }
 
 const updateMessagingAPI = async () => {
@@ -37,6 +50,8 @@ const updateMessagingAPI = async () => {
     type: 'messaging-api',
     currentEndpoint: endpoint,
   })
+
+  saveConfig({ scope: 'messaging-api' })
 }
 
 const update = async () => {
