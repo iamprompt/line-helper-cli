@@ -1,7 +1,7 @@
 import { LIFFApp, LIFFAppSchema } from '@/models/liff'
 import axios, { CreateAxiosDefaults } from 'axios'
 import { z } from 'zod'
-import { logger } from './logger'
+import { debug, logger } from '../utils/logger'
 
 const LINE_API_BASE_URL = 'https://api.line.me'
 
@@ -48,16 +48,24 @@ export const createLIFFApp = async (payload: z.input<typeof LIFFAppSchema>) => {
     return data
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      logger.error(error.response?.data.message)
+      debug.error(error.response?.data.message)
     }
   }
 }
 
 export const getLIFFApps = async () => {
-  const { data } = await LINEInstance.get<{
-    apps: LIFFApp[]
-  }>('/liff/v1/apps')
-  return data.apps
+  try {
+    const { data } = await LINEInstance.get<{
+      apps: LIFFApp[]
+    }>('/liff/v1/apps')
+    return data.apps
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      debug.error('Get LIFF Apps failed:', error.response?.data.message)
+    }
+
+    return []
+  }
 }
 
 export const findLIFFAppByLIFFId = (liffId: string, liffApps: LIFFApp[]) => {
@@ -76,4 +84,58 @@ export const updateLIFFApp = async (
 ) => {
   const response = await LINEInstance.put(`/liff/v1/apps/${liffId}`, payload)
   return response.data
+}
+
+export const setWebhookEndpoint = async (endpoint: string) => {
+  try {
+    const { data } = await LINEInstance.put(
+      '/v2/bot/channel/webhook/endpoint',
+      { endpoint },
+    )
+
+    return data
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      logger.error('Set webhook endpoint failed:', error.response?.data.message)
+    }
+  }
+}
+
+export const getWebhookEndpoint = async () => {
+  try {
+    const { data } = await LINEInstance.get<{
+      endpoint: string
+      active: boolean
+    }>('/v2/bot/channel/webhook/endpoint')
+    return data
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      debug.error('Get webhook endpoint failed:', error.response?.data.message)
+      throw new Error(error.response?.data.message)
+    }
+
+    throw error
+  }
+}
+
+export const getBotInfo = async () => {
+  try {
+    const { data } = await LINEInstance.get<{
+      userId: string
+      basicId: string
+      premiumId?: string
+      displayName: string
+      pictureUrl?: string
+      chatMode: 'chat' | 'bot'
+      markAsReadMode: 'manual' | 'auto'
+    }>('/v2/bot/info')
+
+    return data
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      debug.error('Get bot info failed:', error.response?.data.message)
+    }
+
+    return null
+  }
 }

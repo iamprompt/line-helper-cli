@@ -1,13 +1,17 @@
-import { getLINEAccessToken } from '@/utils/line'
+import { getBotInfo, getLINEAccessToken } from '@/services/line'
 import { loadConfig, saveConfig } from '@/utils/config'
-import { logger } from '@/utils/logger'
+import { debug, logger } from '@/utils/logger'
 import { prompt } from '@/utils/prompts'
 
+let scope: 'liff' | 'messaging-api' | null = null
 let accessToken: string | null = null
 
 export const getCredentials = async () => {
   if (accessToken) {
-    return accessToken
+    return {
+      scope,
+      accessToken,
+    }
   }
 
   while (true) {
@@ -30,11 +34,21 @@ export const getCredentials = async () => {
 
     try {
       const accessToken = await getLINEAccessToken(channelId, channelSecret)
-      logger.success('Successfully authenticated.')
+      debug.info('Access Token:', accessToken)
 
-      saveConfig({ channelId, channelSecret })
+      const botInfo = await getBotInfo()
+      const isMessagingAPI = !!botInfo?.userId
 
-      return accessToken
+      scope = isMessagingAPI ? 'messaging-api' : 'liff'
+
+      debug.info(`Scope: ${scope}`)
+
+      saveConfig({ channelId, channelSecret, scope })
+
+      return {
+        scope,
+        accessToken,
+      }
     } catch (error) {
       logger.error('Invalid credentials, please try again.')
     }

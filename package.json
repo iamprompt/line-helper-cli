@@ -1,5 +1,5 @@
 {
-  "name": "liff-helper",
+  "name": "line-helper",
   "version": "0.1.1",
   "description": "LIFF Helper CLI - A CLI tool for LINE Front-end Framework (LIFF) development",
   "publishConfig": {

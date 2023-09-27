@@ -1,30 +1,27 @@
 import { LIFFAppSchema } from '@/models/liff'
-import { createLIFFApp } from '@/utils/line'
+import { createLIFFApp } from '@/services/line'
 import { prompt } from '@/utils/prompts'
 import { validateUrl } from '@/utils/validations'
-import { liffEndpointPrompt } from './liffEndpointPrompt'
+import { URLEndpointPrompt } from './URLEndpoint'
+import { parseOptions } from '@/utils/options'
+import {
+  LIFF_APP_BOT_PROMPT_OPTIONS,
+  LIFF_APP_SCOPE_OPTIONS,
+  LIFF_APP_VIEW_TYPE_OPTIONS,
+} from '@/const/options'
+import { logger } from '@/utils/logger'
 
-const LIFFAppViewTypes = {
-  full: 'Full',
-  tall: 'Tall',
-  compact: 'Compact',
+type PromptResponse = {
+  description: string
+  type: string
+  moduleMode: boolean
+  qrCode: boolean
+  scopes: string[]
+  botPrompt: string
 }
 
-const LIFFAppScopes = {
-  openid: 'OpenID',
-  email: 'Email',
-  profile: 'Profile',
-  'chat_message.write': 'Chat Message Write',
-}
-
-const LIFFAppBotPrompts = {
-  normal: 'Normal',
-  aggressive: 'Aggressive',
-  none: 'None',
-}
-
-export const createLIFFAppPrompt = async () => {
-  const response = await prompt([
+export const CreateLIFFAppPrompt = async () => {
+  const res: PromptResponse = await prompt([
     {
       type: 'text',
       name: 'description',
@@ -34,10 +31,7 @@ export const createLIFFAppPrompt = async () => {
       type: 'select',
       name: 'type',
       message: 'Select LIFF App View Type',
-      choices: Object.entries(LIFFAppViewTypes).map(([value, title]) => ({
-        title,
-        value,
-      })),
+      choices: parseOptions(LIFF_APP_VIEW_TYPE_OPTIONS),
     },
     {
       type: 'toggle',
@@ -55,41 +49,33 @@ export const createLIFFAppPrompt = async () => {
       type: 'multiselect',
       name: 'scopes',
       message: 'Select LIFF App Scopes',
-      choices: Object.entries(LIFFAppScopes).map(([value, title]) => ({
-        title,
-        value,
-      })),
+      choices: parseOptions(LIFF_APP_SCOPE_OPTIONS),
     },
     {
       type: 'select',
       name: 'botPrompt',
       message: 'Select LIFF App Bot Prompt',
-      choices: Object.entries(LIFFAppBotPrompts).map(([value, title]) => ({
-        title,
-        value,
-      })),
+      choices: parseOptions(LIFF_APP_BOT_PROMPT_OPTIONS),
     },
   ])
 
-  const endpoint = await liffEndpointPrompt()
+  try {
+    const endpoint = await URLEndpointPrompt()
+    const payload = await LIFFAppSchema.parseAsync({
+      description: res.description,
+      view: {
+        type: res.type,
+        moduleMode: res.moduleMode,
+        url: endpoint,
+      },
+      features: { qrCode: res.qrCode },
+      scope: res.scopes,
+      botPrompt: res.botPrompt,
+    })
 
-  if (!endpoint) {
-    process.exit(1)
+    return await createLIFFApp(payload)
+  } catch (error) {
+    logger.error(error)
+    throw error
   }
-
-  const createdPayload = await LIFFAppSchema.parseAsync({
-    description: response.description,
-    view: {
-      type: response.type,
-      moduleMode: response.moduleMode,
-      url: endpoint,
-    },
-    features: { qrCode: response.qrCode },
-    scope: response.scopes,
-    botPrompt: response.botPrompt,
-  })
-
-  const createdLIFFApp = await createLIFFApp(createdPayload)
-
-  return createdLIFFApp
 }

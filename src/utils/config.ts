@@ -1,7 +1,7 @@
 import { Config } from '@/models/config'
 import { cosmiconfigSync } from 'cosmiconfig'
 import fs from 'fs-extra'
-import { logger } from './logger'
+import { debug, logger } from './logger'
 
 const explorerSync = cosmiconfigSync('liff')
 
@@ -11,10 +11,23 @@ const defaultConfigPath = '.liffrc.json'
 let configPath: string | null = null
 let config: Config | null = null
 
+let persistedConfig = false
+
+export const setPersistedConfig = (persisted: boolean) => {
+  persistedConfig = persisted
+  debug.info('Set persisted config:', persistedConfig)
+}
+
 export const loadConfig = async () => {
   if (config) return config
 
   const result = explorerSync.search()
+
+  if (result) {
+    setPersistedConfig(true)
+    logger.info(`Using config file: ${result.filepath}`)
+  }
+
   configPath = result?.filepath || defaultConfigPath
   config = result?.config || {}
   return config as Config
@@ -30,8 +43,10 @@ export const saveConfig = (newConfig: Config) => {
     ...newConfig,
   }
 
-  fs.writeJSONSync(configPath, config, { spaces: 2 })
-  saveGitIgnore()
+  if (persistedConfig) {
+    fs.writeJSONSync(configPath, config, { spaces: 2 })
+    saveGitIgnore()
+  }
 
   return config
 }

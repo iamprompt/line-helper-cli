@@ -1,5 +1,17 @@
 import { z } from 'zod'
 
+const metricsSchema = z.object({
+  count: z.number(),
+  gauge: z.number(),
+  rate1: z.number(),
+  rate5: z.number(),
+  rate15: z.number(),
+  p50: z.number(),
+  p90: z.number(),
+  p95: z.number(),
+  p99: z.number(),
+})
+
 export const NgrokTunnelSchema = z.object({
   name: z.string(),
   ID: z.string(),
@@ -11,27 +23,8 @@ export const NgrokTunnelSchema = z.object({
     inspect: z.boolean(),
   }),
   metrics: z.object({
-    conns: z.object({
-      count: z.number(),
-      gauge: z.number(),
-      rate1: z.number(),
-      rate5: z.number(),
-      rate15: z.number(),
-      p50: z.number(),
-      p90: z.number(),
-      p95: z.number(),
-      p99: z.number(),
-    }),
-    http: z.object({
-      count: z.number(),
-      rate1: z.number(),
-      rate5: z.number(),
-      rate15: z.number(),
-      p50: z.number(),
-      p90: z.number(),
-      p95: z.number(),
-      p99: z.number(),
-    }),
+    conns: metricsSchema,
+    http: metricsSchema,
   }),
 })
 
