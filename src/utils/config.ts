@@ -3,7 +3,8 @@ import fs from 'fs-extra'
 
 import { Config } from '@/models/config'
 
-import { debug, logger } from './logger'
+import { logger } from './logger'
+import { getOptions } from './program'
 
 const explorerSync = cosmiconfigSync('liff')
 
@@ -13,20 +14,12 @@ const defaultConfigPath = '.liffrc.json'
 let configPath: string | null = null
 let config: Config | null = null
 
-let persistedConfig = false
-
-export const setPersistedConfig = (persisted: boolean) => {
-  persistedConfig = persisted
-  debug.info('Set persisted config:', persistedConfig)
-}
-
 export const loadConfig = async () => {
   if (config) return config
 
   const result = explorerSync.search()
 
   if (result) {
-    setPersistedConfig(true)
     logger.info(`Using config file: ${result.filepath}`)
   }
 
@@ -35,7 +28,12 @@ export const loadConfig = async () => {
   return config as Config
 }
 
-export const saveConfig = (newConfig: Config) => {
+export const saveConfig = async (newConfig: Config) => {
+  const { scope } = config || {}
+  const { update: { config: saveConfig } = {} } = await getOptions()
+
+  if (!saveConfig && (config === null || !scope)) return
+
   if (!configPath) {
     throw new Error('Config path is not defined.')
   }
@@ -45,10 +43,8 @@ export const saveConfig = (newConfig: Config) => {
     ...newConfig,
   }
 
-  if (persistedConfig) {
-    fs.writeJSONSync(configPath, config, { spaces: 2 })
-    saveGitIgnore()
-  }
+  fs.writeJSONSync(configPath, config, { spaces: 2 })
+  saveGitIgnore()
 
   return config
 }

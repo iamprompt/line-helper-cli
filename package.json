@@ -1,6 +1,6 @@
 {
   "name": "line-helper",
-  "version": "0.1.5",
+  "version": "0.1.10",
   "description": "LINE Helper CLI - A CLI tool for LINE Front-end Framework (LIFF) and Messaging API development",
   "publishConfig": {
     "access": "public"
@@ -15,7 +15,7 @@
     "format:write": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
     "pub:next": "pnpm build && pnpm publish --no-git-checks --access public --tag next",
-    "pub:release": "pnpm build && pnpm publish --access public"
+    "pub:release": "pnpm build && pnpm publish --no-git-checks --access public"
   },
   "repository": {
     "type": "git",

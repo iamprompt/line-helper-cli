@@ -43,7 +43,7 @@ export const getCredentials = async () => {
 
       debug.info(`Scope: ${scope}`)
 
-      saveConfig({ channelId, channelSecret, scope })
+      await saveConfig({ channelId, channelSecret, scope })
 
       return {
         scope,

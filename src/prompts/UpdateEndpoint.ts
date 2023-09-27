@@ -51,7 +51,7 @@ export const UpdateEndpointPrompt = async ({
           `Successfully updated LIFF App (id: ${id}) to ${newEndpoint}.`,
         )
 
-        saveConfig({ scope: 'liff', liffId: id })
+        await saveConfig({ scope: 'liff', liffId: id })
 
         return newEndpoint
       case 'messaging-api':
@@ -61,7 +61,7 @@ export const UpdateEndpointPrompt = async ({
           `Successfully updated Messaging API webhook to ${newEndpoint}.`,
         )
 
-        saveConfig({ scope: 'messaging-api', liffId: undefined })
+        await saveConfig({ scope: 'messaging-api', liffId: undefined })
 
         return newEndpoint
     }

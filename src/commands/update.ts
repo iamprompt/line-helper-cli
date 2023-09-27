@@ -13,11 +13,11 @@ const updateLIFF = async () => {
 
   let isNewlyCreate = false
 
-  const { changeLiff } = await getOptions()
+  const { update: { changeLiff } = {} } = await getOptions()
 
   if (changeLiff) {
     liffId = undefined
-    saveConfig({ scope: 'liff', liffId: undefined })
+    await saveConfig({ scope: 'liff', liffId: undefined })
   }
 
   if (!liffId) {
@@ -54,7 +54,7 @@ const updateMessagingAPI = async () => {
     currentEndpoint: endpoint,
   })
 
-  saveConfig({ scope: 'messaging-api' })
+  await saveConfig({ scope: 'messaging-api' })
 }
 
 const update = async () => {
@@ -67,7 +67,9 @@ const update = async () => {
   }
 }
 
-export const updateCommand = new Command()
+export const UpdateCommand = new Command()
   .name('update')
   .description('Update LIFF App Endpoint URL or Messaging API Webhook URL')
+  .option('-change, --change-liff', 'change LIFF App', false)
+  .option('-no, --no-config', 'do not save credentials')
   .action(update)

@@ -41,7 +41,7 @@ export const LIFFAppPrompt = async (
     return [newLIFFApp.liffId, true]
   }
 
-  saveConfig({ scope: 'liff', liffId: selectedLIFFApp.liffId })
+  await saveConfig({ scope: 'liff', liffId: selectedLIFFApp.liffId })
 
   return [selectedLIFFApp.liffId as string, false]
 }
