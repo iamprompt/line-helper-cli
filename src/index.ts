@@ -16,12 +16,12 @@ const main = async () => {
   const packageInfo = await getPackageInfo()
 
   const program = new Command()
-    .name('liff-helper')
-    .description('LIFF Helper CLI')
+    .name('line-helper')
+    .description('LINE Helper CLI')
     .version(
       packageInfo.version || '0.0.0',
       '-v, --version',
-      'print the current version of LIFF Helper CLI',
+      'print the current version of LINE Helper CLI',
     )
     .option('-d, --debug', 'print debug logs', false)
     .option('-p, --persist', 'persist credentials', false)
@@ -31,7 +31,7 @@ const main = async () => {
     .addCommand(updateCommand)
     .addCommand(clearCommand)
 
-  logger.info('--> LIFF Helper CLI <--')
+  logger.info('--> LINE Helper CLI <--')
 
   program.parse(process.argv)
 }
