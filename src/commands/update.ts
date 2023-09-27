@@ -40,6 +40,9 @@ const updateLIFF = async () => {
       id: liffId,
       currentEndpoint: app.view.url,
     })
+  } else {
+    logger.break()
+    logger.info('LIFF App is successfully created with id:', liffId)
   }
 }
 
