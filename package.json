@@ -1,6 +1,6 @@
 {
   "name": "line-helper",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "LINE Helper CLI - A CLI tool for LINE Front-end Framework (LIFF) and Messaging API development",
   "publishConfig": {
     "access": "public"

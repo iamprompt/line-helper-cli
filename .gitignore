@@ -3,4 +3,4 @@ dist
 .DS_Store
 
 # LIFF Helper CLI
-.liffrc.json
+.linerc.json

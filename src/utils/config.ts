@@ -6,10 +6,10 @@ import { Config } from '@/models/config'
 import { logger } from './logger'
 import { getOptions } from './program'
 
-const explorerSync = cosmiconfigSync('liff')
+const explorerSync = cosmiconfigSync('line')
 
 const gitIgnorePath = '.gitignore'
-const defaultConfigPath = '.liffrc.json'
+const defaultConfigPath = '.linerc.json'
 
 let configPath: string | null = null
 let config: Config | null = null

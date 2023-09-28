@@ -3,12 +3,11 @@
 ## Usage
 
 ```bash
-npx line-helper <command>
+npx line-helper [options] <command>
 ```
 
 ### Options
 
-- `--persist` Persist Configuration to `.liffrc.json` in Project.
 - `--debug` Enable Debug Mode.
 
 ## Prerequisites
@@ -18,14 +17,10 @@ npx line-helper <command>
 
 ## Commands
 
-### `line-helper init`
-
-Bind LIFF App or Messaging API to Project.
-
 ### `line-helper update`
 
 Update LIFF App or Messaging API URL endpoint.
 
 ### `line-helper clear`
 
-Clear Persisted Configuration `.liffrc.json` from Project.
+Clear Persisted Configuration `.linerc.json` from Project.
